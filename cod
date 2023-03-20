@@ -1,0 +1,26 @@
+def convertir_binario_a_octal(binario):
+    decimal = int(binario, 2)
+    octal = oct(decimal)
+    return str(octal)[2:]
+
+def convertir_binario_a_decimal(binario):
+    return int(binario, 2)
+
+def imprimir_tabla(binario):
+    octal = convertir_binario_a_octal(binario)
+    decimal = convertir_binario_a_decimal(binario)
+
+    print(f'{"Binario":>10} | {"Octal":>10} | {"Decimal":>10}')
+    print(f'{binario:>10} | {octal:>10} | {decimal:>10}')
+
+while True:
+    hex_input = input('Ingrese un número binario de 11 bits en un formato de 3 digitos hexadecimales: ').strip().upper()
+
+    try:
+        binario = bin(int(hex_input, 16))[2:].zfill(11)
+    except ValueError:
+        print('Error: el número ingresado no es hexadecimal.')
+        continue
+
+    imprimir_tabla(binario)
+    break
