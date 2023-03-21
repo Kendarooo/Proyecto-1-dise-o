@@ -1,4 +1,4 @@
-def convertir_binario_a_octal(binario):
+def convertir_binario_a_octal(binario): #Función encargada de convertir el número en Octal y decimal
     decimal = int(binario, 2)
     octal = oct(decimal)
     return str(octal)[2:]
@@ -6,7 +6,7 @@ def convertir_binario_a_octal(binario):
 def convertir_binario_a_decimal(binario):
     return int(binario, 2)
 
-def imprimir_tabla(binario):
+def imprimir_tabla(binario):#Imprime el octal y decimal en la tabla
     octal = convertir_binario_a_octal(binario)
     decimal = convertir_binario_a_decimal(binario)
 
@@ -24,3 +24,20 @@ while True:
 
     imprimir_tabla(binario)
     break
+binary_data == binario
+import matplotlib.pyplot as plt
+
+def nrzi_encoding(data):
+    signal = [0]    # La señal comienza en nivel bajo
+    current_level = 0
+    for bit in data:
+        if bit == '1':
+            current_level = 1 - current_level    # Cambio de nivel si el bit es 1
+        signal.append(current_level)
+    return signal
+signal = nrzi_encoding(binary_data)
+plt.plot(signal)
+plt.title('Señal codificada en NRZI')
+plt.xlabel('Tiempo')
+plt.ylabel('Nivel')
+plt.show()
