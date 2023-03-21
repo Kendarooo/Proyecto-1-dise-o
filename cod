@@ -24,7 +24,7 @@ while True:
 
     imprimir_tabla(binario)
     break
-binary_data == binario
+binary_data = binario
 import matplotlib.pyplot as plt
 
 def nrzi_encoding(data):
