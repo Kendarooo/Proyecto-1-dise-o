@@ -41,3 +41,38 @@ plt.title('Señal codificada en NRZI')
 plt.xlabel('Tiempo')
 plt.ylabel('Nivel')
 plt.show()
+# Pedir al usuario que seleccione el tipo de paridad
+paridad_par = input("¿Desea usar paridad par para la codificación de Hamming? (Sí/No): ")
+if paridad_par.lower() == "sí":
+    paridad_par = True
+else:
+    paridad_par = False
+
+# Pedir al usuario la hilera a codificar
+hilera = binario
+
+# Añadir los bits de datos a una lista
+datos = [int(bit) for bit in hilera]
+
+# Calcular la cantidad de bits de paridad necesarios
+n_parity_bits = 4
+
+# Inicializar los bits de paridad con valor 0
+parity_bits = [0] * n_parity_bits
+
+# Calcular los bits de paridad
+for i in range(n_parity_bits):
+    # Calcular la posición del bit de paridad
+    pos = 2**i - 1
+    
+    # Calcular el valor del bit de paridad
+    if paridad_par:
+        parity_bits[i] = sum([datos[j] for j in range(pos, len(datos), 2)]) % 2
+    else:
+        parity_bits[i] = (sum([datos[j] for j in range(pos, len(datos), 2)]) + 1) % 2
+    
+    # Insertar el bit de paridad en la lista de datos
+    datos.insert(pos, parity_bits[i])
+
+# Imprimir la hilera codificada
+print("La hilera codificada es: ", ''.join(str(bit) for bit in datos))
