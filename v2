@@ -1,0 +1,168 @@
+def convertir_binario_a_octal(binario):  # Función encargada de convertir el número en Octal y decimal
+    decimal = int(binario, 2)
+    octal = oct(decimal)
+    return str(octal)[2:]
+
+
+def convertir_binario_a_decimal(binario):
+    return int(binario, 2)
+
+
+def imprimir_tabla(binario):  # Imprime el octal y decimal en la tabla
+    octal = convertir_binario_a_octal(binario)
+    decimal = convertir_binario_a_decimal(binario)
+
+    print(f'{"Binario":>10} | {"Octal":>10} | {"Decimal":>10}')
+    print(f'{binario:>10} | {octal:>10} | {decimal:>10}')
+
+
+while True:
+    hex_input = input('Ingrese un número binario de 11 bits en un formato de 3 digitos hexadecimales: ').strip().upper()
+
+    try:
+        binario = bin(int(hex_input, 16))[2:].zfill(11)
+    except ValueError:
+        print('Error: el número ingresado no es hexadecimal.')
+        continue
+
+    imprimir_tabla(binario)
+    break
+binary_data = binario
+import matplotlib.pyplot as plt
+
+
+def nrzi_encoding(data):
+    signal = [0]  # La señal comienza en nivel bajo
+    current_level = 0
+    for bit in data:
+        if bit == '1':
+            current_level = 1 - current_level  # Cambio de nivel si el bit es 1
+        signal.append(current_level)
+    return signal
+
+
+signal = nrzi_encoding(binary_data)
+plt.plot(signal)
+plt.title('Señal codificada en NRZI')
+plt.xlabel('Tiempo')
+plt.ylabel('Nivel')
+plt.show()
+# Pedir al usuario que seleccione el tipo de paridad
+paridad_par = input("¿Desea usar paridad par para la codificación de Hamming? (Sí/No): ")
+if paridad_par.lower() == "si":
+    paridad_par = True
+else:
+    paridad_par = False
+
+# Pedir al usuario la hilera a codificar
+hilera = binario
+
+# Añadir los bits de datos a una lista
+datos = [int(bit) for bit in hilera]
+
+# Calcular la cantidad de bits de paridad necesarios
+n_parity_bits = 4
+
+# Inicializar los bits de paridad con valor 0
+parity_bits = [0] * n_parity_bits
+
+datos_Rparidad=[]
+for i in range(len(datos)):
+    datos_Rparidad.append(datos[i])
+
+# Palabra con bits de paridad redundantes
+datos_redudante=[]
+for i in range(4):
+    posi=(2**i)-1
+    datos_Rparidad.insert(posi,"X")
+
+#Haciendo una copia
+for i in range(len(datos_Rparidad)):
+    datos_redudante.append(datos_Rparidad[i])
+
+for i in range(1,5):
+    pos=2**(i-1)
+    salto=(2**i)
+    contador=0
+    for j in range(pos-1, len(datos_Rparidad), salto):
+        for k in datos_Rparidad[j:j+pos]:
+            if k=='X':
+                continue
+            if k==1:
+                contador=contador+1
+
+    if (contador%2)==0:
+        if paridad_par==True:
+            datos_Rparidad[pos-1]=1
+        if paridad_par==False:
+            datos_Rparidad[pos - 1] = 0
+    else:
+        if paridad_par==True:
+            datos_Rparidad[pos-1]=0
+        if paridad_par==False:
+            datos_Rparidad[pos - 1] = 1
+
+
+# Imprimir la hilera codificada
+print("La hilera codificada es: ", ''.join(str(bit) for bit in datos_Rparidad))
+
+
+
+# Datos de las tablas
+calculoBit = [[' ', 'p1', 'p2', 'd1', 'p3', 'd2', 'd3', 'd4', 'p4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10', 'd11'],
+         ['Palabra de datos(sin pardidad)']+datos_redudante,
+         ["p1",datos_Rparidad[0], ' ', datos_Rparidad[2], ' ', datos_Rparidad[4],' ', datos_Rparidad[6],' ', datos_Rparidad[8],' ', datos_Rparidad[10], ' ',datos_Rparidad[12], ' ', datos_Rparidad[14]],
+         ["p2",' ', datos_Rparidad[1],datos_Rparidad[2],' ',' ',datos_Rparidad[5],datos_Rparidad[6], ' ', ' ', datos_Rparidad[9],datos_Rparidad[10], ' ', ' ',datos_Rparidad[13],datos_Rparidad[14]],
+         ["p3",' ',' ',' ',datos_Rparidad[3],datos_Rparidad[4],datos_Rparidad[5],datos_Rparidad[6],' ',' ',' ',' ',datos_Rparidad[11],datos_Rparidad[12],datos_Rparidad[13],datos_Rparidad[14]],
+         ["p4",' ',' ',' ',' ',' ',' ',' ',datos_Rparidad[7],datos_Rparidad[8],datos_Rparidad[9],datos_Rparidad[10],datos_Rparidad[11],datos_Rparidad[12],datos_Rparidad[13],datos_Rparidad[14]],
+         ['Palabra de datos(con paridad)']+datos_Rparidad,
+         ]
+
+
+# Crear la tabla
+fig1, ax1 = plt.subplots()
+tabla1 = ax1.table(cellText=calculoBit, loc='center')
+
+# Configurar la tabla
+tabla1.auto_set_font_size(False)
+tabla1.set_fontsize(14)
+tabla1.scale(6, 3)
+tabla1.auto_set_column_width(col=list(range(len(calculoBit[0]))))  # Ajustar ancho de columnas
+
+
+# Ocultar ejes
+ax1.axis('off')
+
+# Mostrar la tabla
+plt.show()
+
+
+bit_cambiar=int(input("Proporcione la posición del bit que desea cambiar para generar un error, digite un numero de 1 al 15: "))
+
+if datos_Rparidad[bit_cambiar-1]==1:
+    datos_Rparidad[bit_cambiar - 1] = 0
+else:
+    datos_Rparidad[bit_cambiar - 1] = 1
+
+pruebaP = [[' ', 'p1', 'p2', 'd1', 'p3', 'd2', 'd3', 'd4', 'p4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10', 'd11', 'Prueba paridad', 'Bit de paridad'],
+         ['Palabra de datos(sin pardidad)']+datos_Rparidad+[" ",' '],
+         ["p1",datos_Rparidad[0], ' ', datos_Rparidad[2], ' ', datos_Rparidad[4],' ', datos_Rparidad[6],' ', datos_Rparidad[8],' ', datos_Rparidad[10], ' ',datos_Rparidad[12], ' ', datos_Rparidad[14]]+[" ",' '],
+         ["p2",' ', datos_Rparidad[1],datos_Rparidad[2],' ',' ',datos_Rparidad[5],datos_Rparidad[6], ' ', ' ', datos_Rparidad[9],datos_Rparidad[10], ' ', ' ',datos_Rparidad[13],datos_Rparidad[14]]+[" ",' '],
+         ["p3",' ',' ',' ',datos_Rparidad[3],datos_Rparidad[4],datos_Rparidad[5],datos_Rparidad[6],' ',' ',' ',' ',datos_Rparidad[11],datos_Rparidad[12],datos_Rparidad[13],datos_Rparidad[14]]+[" ",' '],
+         ["p4",' ',' ',' ',' ',' ',' ',' ',datos_Rparidad[7],datos_Rparidad[8],datos_Rparidad[9],datos_Rparidad[10],datos_Rparidad[11],datos_Rparidad[12],datos_Rparidad[13],datos_Rparidad[14]]+[" ",' '],
+         ]
+fig2, ax2 = plt.subplots()
+tabla2 = ax2.table(cellText=pruebaP, loc='center')
+
+# Configurar la tabla
+tabla2.auto_set_font_size(False)
+tabla2.set_fontsize(14)
+tabla2.scale(6, 3)
+tabla2.auto_set_column_width(col=list(range(len(pruebaP[0]))))  # Ajustar ancho de columnas
+
+
+# Ocultar ejes
+ax2.axis('off')
+
+# Mostrar la tabla
+plt.show()
